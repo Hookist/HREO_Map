@@ -59,7 +59,7 @@ namespace AddressesMap.Controllers
         [ResponseType(typeof(IEnumerable<Address>))]
         public HttpResponseMessage GetAddresses(HttpRequestMessage request)
         {
-            var addresses = adrModel.Addresses.ToList();
+            var addresses = adrModel.Addresses.Where(a => a.AddressId < 884).ToList();
             return request.CreateResponse(HttpStatusCode.OK, addresses);
         }
     }
