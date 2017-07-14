@@ -1,0 +1,18 @@
+﻿.mom {
+    width: 100%; /* Try setting this to 400px or something */
+    display: table;
+}
+
+.child {
+    display: table-cell;
+}
+
+.childinner {
+    margin-left: 25px;
+    /* Decorative .. */
+    min-height: 40px;
+}
+
+.child:first-child .childinner {
+    margin-left: 0;
+}

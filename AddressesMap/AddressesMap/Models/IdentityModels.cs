@@ -29,5 +29,7 @@ namespace AddressesMap.Models
         {
             return new ApplicationDbContext();
         }
+
+        public System.Data.Entity.DbSet<AddressesMap.Models.DBModels.Street> Streets { get; set; }
     }
 }
