@@ -104,10 +104,14 @@ namespace AddressesMap.Controllers.Api
             return Ok(address);
         }
 
-        //GET: api/Addresses/AddressesByHRUA/5
-        public IQueryable<Address> AddressesByHRUA (int id)
+        //GET: api/Addresses/AddressesBySubdivision/5
+        public IQueryable<Address> AddressesBySubdivision (int id)
         {
-            return db.Addresses.Where(a => a.SubdivisionId == id);
+            if(id == 0)
+            {
+                return null;
+            }
+            return db.Addresses.Where(a => a.SubdivisionId == id && a.AddressId < 500);
         }
 
         protected override void Dispose(bool disposing)

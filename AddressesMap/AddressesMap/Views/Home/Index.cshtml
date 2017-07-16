@@ -3,12 +3,10 @@
 }
 
 <script src="http://maps.google.com/maps/api/js?key=AIzaSyCZkVThZaYZD67Qivu2t-5WUHQayOTTUZ0" type="text/javascript"></script>
-<link href="~/Content/Row.css" rel="stylesheet" />
 <style>
     #map_canvas img {
         max-width: none;
     }
-
 </style>
 
 <!-- This css is to give a nice big popup "info window" when a marker is clicked on the map -->
@@ -23,16 +21,17 @@
 <br />
 
 
-<div class="dropdown">
-    <button class="btn btn-default dropdown-toggle btn-primary" type="button" id="menu1" data-toggle="dropdown">
-        Subdivisions
-        <span class="caret"></span>
-    </button>
-    <ul id="subdivisions" class="dropdown-menu" role="menu" aria-labelledby="menu1"></ul>
+<div class="form-group">
+    <div id="map_canvas" style="height: 550px;"></div>
+</div>
+<div class="col-xs-5 selectContainer">
+    <select id="subdivisions" class="form-control" name="size">
+        <option disabled selected>Выберите ЖРЕО:</option>
+    </select>
 </div>
 
 @*<button type="button" class="btn btn-danger dropdown-toggle">GetAddresses</button>*@
-<div id="map_canvas"" style="height: 550px;"></div>
+
 
 
 <!-- Enclose the Javascript in a "section" so that it is rendered in the correct order after scripts have been loaded etc -->
@@ -65,22 +64,23 @@
 
             $.get("http://localhost:4955/api/Subdivision", function (data, status) {
                 $.each(data, function (i, item) {
-                    $("#subdivisions").append("<li role='presentation'><a role='menuitem' tabindex=" + item["<SubdivisionId>k__BackingField"] + ">" + item["<SubdivisionName>k__BackingField"] + "</a></li>" +
-                        "<li role= 'presentation' class='divider' ></li >");
+                    $("#subdivisions").append("<option value=" + item["<SubdivisionId>k__BackingField"] + ">" + item["<SubdivisionName>k__BackingField"] + "</option>");
                 });
             });
-            
+
 
 
         // you can either make up a JSON list server side, or call it from a controller using JSONResult
-            $("button").click(function () {
-                $.get("http://localhost:4955/api/Addresses", function (data, status) {
+            $("select").change(function () {
+                $.post("http://localhost:4955/api/Addresses/AddressesBySubdivision/" + $("#subdivisions").val(), function (data, status) {
+                    deleteMarkers();
                     $.each(data, function (i, item) {
-                        var marker = new google.maps.Marker({
+                        marker = new google.maps.Marker({
                             'position': new google.maps.LatLng(item['<Latitude>k__BackingField'], item['<Longitude>k__BackingField']),
                             'map': map,
                             'title': item['<House>k__BackingField']
                         });
+                        merkers.push(marker);
                         marker.setIcon('http://maps.google.com/mapfiles/ms/icons/blue-dot.png');
                         // put in some information about each json object - in this case, the opening hours.
                         var infowindow = new google.maps.InfoWindow({
@@ -99,9 +99,23 @@
                     });
                 });
             });
+          }
 
-            
-    }
+            var map;
+            var marker = [];
+            var merkers = [];
+            function setMapOnAll(map) {
+                for (var i = 0; i < merkers.length; i++) {
+                    merkers[i].setMap(map);
+                }
+            }
+            function clearMarkers() {
+                setMapOnAll(null);
+            }
+            function deleteMarkers() {
+                clearMarkers();
+                merkers = [];
+            }
 
 
         </script>
