@@ -35,5 +35,7 @@ namespace AddressesMap.Models.DBModels
         public virtual Street Street { get; set; }
 
         public virtual Subdivision Subdivision { get; set; }
+
+
     }
 }

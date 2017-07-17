@@ -25,7 +25,7 @@
     <div id="map_canvas" style="height: 550px;"></div>
 </div>
 <div class="col-xs-5 selectContainer">
-    <select id="subdivisions" class="form-control" name="size">
+    <select id="subdivisions" class="form-control viewDialog" name="size">
         <option disabled selected>Выберите ЖРЕО:</option>
     </select>
 </div>
@@ -41,12 +41,18 @@
         <script type="text/javascript">
 
     <!-- This code tells the browser to execute the "Initialize" method only when the complete document model has been loaded. -->
-    $(document).ready(function () {
-        Initialize();
-    });
+     $(document).ready(function () {
+     $.ajaxSetup({ cache: false });
+         Initialize();
+     });
+
+     $("#map_canvas").on("click", "#edit", function () {
+                showDialog();
+     });
 
     // Where all the fun happens
     function Initialize() {
+
 
         // Google has tweaked their interface somewhat - this tells the api to use that new UI
         google.maps.visualRefresh = true;
@@ -84,13 +90,15 @@
                         marker.setIcon('http://maps.google.com/mapfiles/ms/icons/blue-dot.png');
                         // put in some information about each json object - in this case, the opening hours.
                         var infowindow = new google.maps.InfoWindow({
-                            content: "<div class='infoDiv'><ul class='list-group'>" +
-                            "<li class='list-group-item'> Номер дома: " + item['<House>k__BackingField'] + "</li>" +
+                            content: 
+                            "<div class='infoDiv'><ul class='list-group'>" +
+                            "<li class='list-group-item'>Номер дома: " + item['<House>k__BackingField'] + "</li>" +
                             "<li class='list-group-item'>Серия : " + item['<Serial>k__BackingField'] + "</li>" +
                             "<li class='list-group-item'>Количество этажей : " + item['<CountFloor>k__BackingField'] + "</li>" +
                             "<li class='list-group-item'>Количество входов : " + item['<CountEntrance>k__BackingField'] + "</li>" +
                             "<li class='list-group-item'>Координаты : " + item['<Latitude>k__BackingField'] + "° шир. " + item['<Longitude>k__BackingField'] + "° дол.</li>" +
-                            "</ul></div>"
+                            "<button  id='edit' style='font-size:24px'><a class='fa fa-gear' href='/Home/EditAddress/" + item['<AddressId>k__BackingField'] + "'>" + "Edit</a></button>" +
+                            "</ul></div></form>"
                         });
                         // finally hook up an "OnClick" listener to the map so it pops up out info-window when the marker-pin is clicked!
                         google.maps.event.addListener(marker, 'click', function () {
@@ -100,8 +108,6 @@
                 });
             });
           }
-
-            var map;
             var marker = [];
             var merkers = [];
             function setMapOnAll(map) {
@@ -117,6 +123,32 @@
                 merkers = [];
             }
 
+            function showDialog() {
+                $("<div></div>")
+                    .addClass("dialog")
+                    .appendTo("body")
+                    .dialog({
+                        maxWidth: 600,
+                        maxHeight: 800,
+                        minWidth: 300,
+                        minHeight: 400,
+                        width: 600,
+                        height: 800,
+                        title: $(this).attr("data-dialog-title"),
+                        buttons: {
+                            "Save": function () {
+                                $('').submit();
+                            },
+                            "Cancel": function () {
+                                $(this).remove();
+                            }
+                        },
+                        close: function () {
+                            $(this).remove();
+                        },
+                        modal: true
+                    }).load(this.href);
+            }
 
         </script>
     </section>
