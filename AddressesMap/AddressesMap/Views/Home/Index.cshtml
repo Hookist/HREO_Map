@@ -30,6 +30,31 @@
     </select>
 </div>
 
+<span style="display:none"> 
+    <div id="house_view">
+        <ul class='list-group'>
+            <span id="house_id"></span>
+            <li class='list-group-item'>Номер дома: <span id="house_number"></span></li>
+            <li class='list-group-item'>Серия : <span id="house_serial"></span> </li>
+            <li class='list-group-item'>Количество этажей : <span id="house_count_floor"></span> </li>
+            <li class='list-group-item'>Количество входов : <span id="house_count_entrance"></span> </li>
+            <li class='list-group-item'>Координаты : <span id="house_coordinates" /> </li>
+            <button id='edit' class='fa fa-gear' onclick="showDialog($('#house_view #house_id').html())" style='font-size:24px'>Edit</button>
+        </ul>
+    </div>
+
+    <div id="house_edit">
+        <form id="address_form" action="/api/Addresses/" method="put">
+            <span name="id" id="house_id" value="" />
+            <li class='list-group-item'>Номер дома: <input id="house_number"/> </li>
+            <li class='list-group-item'>Серия : <input id="house_serial" /> </li>
+            <li class='list-group-item'>Количество этажей : <input id="house_count_floor" />  </li>
+            <li class='list-group-item'>Количество входов : <input id="house_count_entrance" /> </li>
+            <li class='list-group-item'>Координаты : <input id="house_latitude"></input>шир. <input id="house_longitude"></input>дол. </li>
+            <input type="submit" value="Submit"></input>
+        </form>
+    </div>
+</span>
 @*<button type="button" class="btn btn-danger dropdown-toggle">GetAddresses</button>*@
 
 
@@ -46,109 +71,103 @@
          Initialize();
      });
 
-     $("#map_canvas").on("click", "#edit", function () {
-                showDialog();
-     });
+     //$("#map_canvas").on("click", "#edit", function () {
+     //           showDialog();
+     //});
 
     // Where all the fun happens
-    function Initialize() {
+            function Initialize() {
 
 
-        // Google has tweaked their interface somewhat - this tells the api to use that new UI
-        google.maps.visualRefresh = true;
-            var Kiev = new google.maps.LatLng(50.4546600, 30.5238000);
+                // Google has tweaked their interface somewhat - this tells the api to use that new UI
+                google.maps.visualRefresh = true;
+                var Kiev = new google.maps.LatLng(50.4546600, 30.5238000);
 
-        // These are options that set initial zoom level, where the map is centered globally to start, and the type of map to show
-        var mapOptions = {
-            zoom: 12,
-            center: Kiev,
-            mapTypeId: google.maps.MapTypeId.G_NORMAL_MAP
-        };
+                // These are options that set initial zoom level, where the map is centered globally to start, and the type of map to show
+                var mapOptions = {
+                    zoom: 12,
+                    center: Kiev,
+                    mapTypeId: google.maps.MapTypeId.G_NORMAL_MAP
+                };
 
-        // This makes the div with id "map_canvas" a google map
-        var map = new google.maps.Map(document.getElementById("map_canvas"), mapOptions);
+                // This makes the div with id "map_canvas" a google map
+                var map = new google.maps.Map(document.getElementById("map_canvas"), mapOptions);
 
-            $.get("http://localhost:4955/api/Subdivision", function (data, status) {
-                $.each(data, function (i, item) {
-                    $("#subdivisions").append("<option value=" + item["<SubdivisionId>k__BackingField"] + ">" + item["<SubdivisionName>k__BackingField"] + "</option>");
-                });
-            });
-
-
-
-        // you can either make up a JSON list server side, or call it from a controller using JSONResult
-            $("select").change(function () {
-                $.post("http://localhost:4955/api/Addresses/AddressesBySubdivision/" + $("#subdivisions").val(), function (data, status) {
-                    deleteMarkers();
+                $.get("http://localhost:4955/api/Subdivision", function (data, status) {
                     $.each(data, function (i, item) {
-                        marker = new google.maps.Marker({
-                            'position': new google.maps.LatLng(item['<Latitude>k__BackingField'], item['<Longitude>k__BackingField']),
-                            'map': map,
-                            'title': item['<House>k__BackingField']
-                        });
-                        merkers.push(marker);
-                        marker.setIcon('http://maps.google.com/mapfiles/ms/icons/blue-dot.png');
-                        // put in some information about each json object - in this case, the opening hours.
-                        var infowindow = new google.maps.InfoWindow({
-                            content: 
-                            "<div class='infoDiv'><ul class='list-group'>" +
-                            "<li class='list-group-item'>Номер дома: " + item['<House>k__BackingField'] + "</li>" +
-                            "<li class='list-group-item'>Серия : " + item['<Serial>k__BackingField'] + "</li>" +
-                            "<li class='list-group-item'>Количество этажей : " + item['<CountFloor>k__BackingField'] + "</li>" +
-                            "<li class='list-group-item'>Количество входов : " + item['<CountEntrance>k__BackingField'] + "</li>" +
-                            "<li class='list-group-item'>Координаты : " + item['<Latitude>k__BackingField'] + "° шир. " + item['<Longitude>k__BackingField'] + "° дол.</li>" +
-                            "<button  id='edit' style='font-size:24px'><a class='fa fa-gear' href='/Home/EditAddress/" + item['<AddressId>k__BackingField'] + "'>" + "Edit</a></button>" +
-                            "</ul></div></form>"
-                        });
-                        // finally hook up an "OnClick" listener to the map so it pops up out info-window when the marker-pin is clicked!
-                        google.maps.event.addListener(marker, 'click', function () {
-                            infowindow.open(map, marker);
+                        $("#subdivisions").append("<option value=" + item["<SubdivisionId>k__BackingField"] + ">" + item["<SubdivisionName>k__BackingField"] + "</option>");
+                    });
+                });
+
+                // var marker = [];
+                var merkers = [];
+                var lastInfoWindow;
+
+                // you can either make up a JSON list server side, or call it from a controller using JSONResult
+                $("select").change(function () {
+                    $.get("/api/Addresses/AddressesBySubdivision/" + $("#subdivisions").val(), function (data, status) {
+                        for (var i = 0; i < merkers.length; i++) {
+                            merkers[i].setMap(null);
+                        }
+                        merkers = [];
+                        $.each(data, function (i, item) {
+                            marker = new google.maps.Marker({
+                                'position': new google.maps.LatLng(item['<Latitude>k__BackingField'], item['<Longitude>k__BackingField']),
+                                'map': map,
+                                'title': item['<House>k__BackingField'],
+                                'house_id': item['<AddressId>k__BackingField']
+                            });
+                            marker.setMap(map);
+                            merkers.push(marker);
+                            marker.setIcon('http://maps.google.com/mapfiles/ms/icons/blue-dot.png');
+                            google.maps.event.addListener(marker, 'click', (function (marker, i) {
+                                return function () {
+                                    var infowindow = new google.maps.InfoWindow();
+                                    $('#house_view #house_id').html(marker.house_id);
+                                    $('#house_view #house_number').html(item['<House>k__BackingField']);
+                                    $('#house_view #house_serial').html(item['<Serial>k__BackingField']);
+                                    $('#house_view #house_count_floor').html(item['<CountFloor>k__BackingField']);
+                                    $('#house_view #house_count_entrance').html(item['<CountEntrance>k__BackingField']);
+                                    $('#house_view #house_coordinates').html(item['<Latitude>k__BackingField'] + "° шир. -" + item['<Longitude>k__BackingField'] + "° дол.");
+                                    infowindow.setContent($('#house_view').html());
+                                    infowindow.open(map, marker);
+                                }
+                            })(marker, i));
                         });
                     });
                 });
-            });
-          }
-            var marker = [];
-            var merkers = [];
-            function setMapOnAll(map) {
-                for (var i = 0; i < merkers.length; i++) {
-                    merkers[i].setMap(map);
-                }
-            }
-            function clearMarkers() {
-                setMapOnAll(null);
-            }
-            function deleteMarkers() {
-                clearMarkers();
-                merkers = [];
+
+                $("#address_form").submit(function (event) {
+                    event.preventDefault();
+                    var $form = $(this),
+                        url = $form.attr('action') + $('#house_edit #house_id').val();
+                    var posting = $.ajax({
+                        type: "PUT",
+                        url: url,
+                        data: {
+                            "<House>k__BackingField": "39/2",
+                            "<СountFloor>k__BackingField": 4,
+                            "<Latitude>k__BackingField": 50.448934,
+                            "<Longitude>k__BackingField": 30.610834,
+                        },
+                        dataType: "json"
+                    });
+            });     
+           }
+
+            function showDialog(id) {
+                $.get("/api/Addresses/GetAddress/" + id, function (data, status) {
+                    $('#house_edit #house_id').val(data['<AddressId>k__BackingField']);
+                    $('#house_edit #house_number').val(data['<House>k__BackingField']);
+                    $('#house_edit #house_serial').val(data['<Serial>k__BackingField']);
+                    $('#house_edit #house_count_floor').val(data['<CountFloor>k__BackingField']);
+                    $('#house_edit #house_count_entrance').val(data['<CountEntrance>k__BackingField']);
+                    $('#house_edit #house_latitude').val(data['<Latitude>k__BackingField']);
+                    $('#house_edit #house_longitude').val(data['<Longitude>k__BackingField']);
+                });
+                $("#house_edit").dialog();
             }
 
-            function showDialog() {
-                $("<div></div>")
-                    .addClass("dialog")
-                    .appendTo("body")
-                    .dialog({
-                        maxWidth: 600,
-                        maxHeight: 800,
-                        minWidth: 300,
-                        minHeight: 400,
-                        width: 600,
-                        height: 800,
-                        title: $(this).attr("data-dialog-title"),
-                        buttons: {
-                            "Save": function () {
-                                $('').submit();
-                            },
-                            "Cancel": function () {
-                                $(this).remove();
-                            }
-                        },
-                        close: function () {
-                            $(this).remove();
-                        },
-                        modal: true
-                    }).load(this.href);
-            }
 
         </script>
     </section>

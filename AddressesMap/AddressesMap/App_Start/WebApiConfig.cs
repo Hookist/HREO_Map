@@ -11,6 +11,7 @@ namespace AddressesMap
         public static void Register(HttpConfiguration config)
         {
             // Web API routes
+            config.MapHttpAttributeRoutes();
 
             config.Routes.MapHttpRoute(
                 name: "DefaultApi",
@@ -22,6 +23,11 @@ namespace AddressesMap
                 name: "ActionRoute",
                 routeTemplate: "api/{controller}/{action}/{id}",
                 defaults: new { id = RouteParameter.Optional });
+            config.Routes.MapHttpRoute(
+                name: "ApiRoot",
+                routeTemplate: "api/{controller}/GetAddress/{id}",
+                defaults: new { controller = "Addresses", id = RouteParameter.Optional }
+            );
         }
     }
 }

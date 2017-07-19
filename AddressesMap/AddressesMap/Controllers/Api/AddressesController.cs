@@ -20,12 +20,14 @@ namespace AddressesMap.Controllers.Api
         private AddressesMapModel db = new AddressesMapModel();
 
         // GET: api/Addresses
-        public IQueryable<Address> GetAddresses()
+        [HttpGet]
+        public IQueryable<Address> Get()
         {
             return db.Addresses;
         }
 
         // GET: api/Addresses/5
+        [HttpGet]
         [ResponseType(typeof(Address))]
         public async Task<IHttpActionResult> GetAddress(int id)
         {
@@ -39,41 +41,43 @@ namespace AddressesMap.Controllers.Api
         }
 
         // PUT: api/Addresses/5
+        [HttpPut]
         [ResponseType(typeof(void))]
         public async Task<IHttpActionResult> PutAddress(int id, Address address)
         {
-            if (!ModelState.IsValid)
-            {
-                return BadRequest(ModelState);
-            }
+            //if (!ModelState.IsValid)
+            //{
+            //    return BadRequest(ModelState);
+            //}
 
-            if (id != address.AddressId)
-            {
-                return BadRequest();
-            }
+            //if (id != address.AddressId)
+            //{
+            //    return BadRequest();
+            //}
 
-            db.Entry(address).State = EntityState.Modified;
+            //db.Entry(address).State = EntityState.Modified;
 
-            try
-            {
-                await db.SaveChangesAsync();
-            }
-            catch (DbUpdateConcurrencyException)
-            {
-                if (!AddressExists(id))
-                {
-                    return NotFound();
-                }
-                else
-                {
-                    throw;
-                }
-            }
+            //try
+            //{
+            //    await db.SaveChangesAsync();
+            //}
+            //catch (DbUpdateConcurrencyException)
+            //{
+            //    if (!AddressExists(id))
+            //    {
+            //        return NotFound();
+            //    }
+            //    else
+            //    {
+            //        throw;
+            //    }
+            //}
 
             return StatusCode(HttpStatusCode.NoContent);
         }
 
         // POST: api/Addresses
+        [HttpPost]
         [ResponseType(typeof(Address))]
         public async Task<IHttpActionResult> PostAddress(Address address)
         {
@@ -89,6 +93,7 @@ namespace AddressesMap.Controllers.Api
         }
 
         // DELETE: api/Addresses/5
+        [HttpDelete]
         [ResponseType(typeof(Address))]
         public async Task<IHttpActionResult> DeleteAddress(int id)
         {
@@ -105,6 +110,7 @@ namespace AddressesMap.Controllers.Api
         }
 
         //GET: api/Addresses/AddressesBySubdivision/5
+        [HttpGet]
         public IQueryable<Address> AddressesBySubdivision (int id)
         {
             if(id == 0)
