@@ -45,33 +45,33 @@ namespace AddressesMap.Controllers.Api
         [ResponseType(typeof(void))]
         public async Task<IHttpActionResult> PutAddress(int id, Address address)
         {
-            //if (!ModelState.IsValid)
-            //{
-            //    return BadRequest(ModelState);
-            //}
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(ModelState);
+            }
 
-            //if (id != address.AddressId)
-            //{
-            //    return BadRequest();
-            //}
+            if (id != address.AddressId)
+            {
+                return BadRequest();
+            }
 
-            //db.Entry(address).State = EntityState.Modified;
+            db.Entry(address).State = EntityState.Modified;
 
-            //try
-            //{
-            //    await db.SaveChangesAsync();
-            //}
-            //catch (DbUpdateConcurrencyException)
-            //{
-            //    if (!AddressExists(id))
-            //    {
-            //        return NotFound();
-            //    }
-            //    else
-            //    {
-            //        throw;
-            //    }
-            //}
+            try
+            {
+                await db.SaveChangesAsync();
+            }
+            catch (DbUpdateConcurrencyException)
+            {
+                if (!AddressExists(id))
+                {
+                    return NotFound();
+                }
+                else
+                {
+                    throw;
+                }
+            }
 
             return StatusCode(HttpStatusCode.NoContent);
         }
@@ -89,7 +89,7 @@ namespace AddressesMap.Controllers.Api
             db.Addresses.Add(address);
             await db.SaveChangesAsync();
 
-            return CreatedAtRoute("DefaultApi", new { id = address.AddressId }, address);
+            return StatusCode(HttpStatusCode.NoContent);
         }
 
         // DELETE: api/Addresses/5
@@ -142,7 +142,7 @@ namespace AddressesMap.Controllers.Api
             return new GeocodingService().GetResponse(request);
         }
 
-        public HttpResponseMessage FillCoordinates(HttpRequestMessage request)
+        private HttpResponseMessage FillCoordinates(HttpRequestMessage request)
         {
             var addresses = (from adr in db.Addresses
                              join str in db.Streets

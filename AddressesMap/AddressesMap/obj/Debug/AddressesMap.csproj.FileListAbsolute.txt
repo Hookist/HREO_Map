@@ -203,6 +203,6 @@ F:\STAS\ProgrammingHomeworks\VisualStudio2017\Asp.Net\HREO_Map\AddressesMap\Addr
 F:\STAS\ProgrammingHomeworks\VisualStudio2017\Asp.Net\HREO_Map\AddressesMap\AddressesMap\bin\Microsoft.AI.ServerTelemetryChannel.xml
 F:\STAS\ProgrammingHomeworks\VisualStudio2017\Asp.Net\HREO_Map\AddressesMap\AddressesMap\bin\Microsoft.AI.WindowsServer.xml
 F:\STAS\ProgrammingHomeworks\VisualStudio2017\Asp.Net\HREO_Map\AddressesMap\AddressesMap\bin\Microsoft.AI.Web.xml
-F:\STAS\ProgrammingHomeworks\VisualStudio2017\Asp.Net\HREO_Map\AddressesMap\AddressesMap\obj\Debug\AddressesMap.csprojResolveAssemblyReference.cache
 F:\STAS\ProgrammingHomeworks\VisualStudio2017\Asp.Net\HREO_Map\AddressesMap\AddressesMap\obj\Debug\AddressesMap.dll
 F:\STAS\ProgrammingHomeworks\VisualStudio2017\Asp.Net\HREO_Map\AddressesMap\AddressesMap\obj\Debug\AddressesMap.pdb
+F:\STAS\ProgrammingHomeworks\VisualStudio2017\Asp.Net\HREO_Map\AddressesMap\AddressesMap\obj\Debug\AddressesMap.csprojResolveAssemblyReference.cache

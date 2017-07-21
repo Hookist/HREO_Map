@@ -16,7 +16,7 @@ namespace AddressesMap.Controllers.Api
 {
     public class StreetsController : ApiController
     {
-        private ApplicationDbContext db = new ApplicationDbContext();
+        private AddressesMapModel db = new AddressesMapModel();
 
         // GET: api/Streets
         public IQueryable<Street> GetStreets()

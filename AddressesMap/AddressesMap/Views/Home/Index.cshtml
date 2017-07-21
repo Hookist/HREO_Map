@@ -25,33 +25,140 @@
     <div id="map_canvas" style="height: 550px;"></div>
 </div>
 <div class="col-xs-5 selectContainer">
-    <select id="subdivisions" class="form-control viewDialog" name="size">
-        <option disabled selected>Выберите ЖРЕО:</option>
-    </select>
+    <select id="subdivisions" class="form-control viewDialog" name="size"></select>
 </div>
 
-<span style="display:none"> 
+<span style="display:none">
     <div id="house_view">
         <ul class='list-group'>
             <span id="house_id"></span>
+            <li class='list-group-item'>Улица : <span id="house_street"></span></li>
+            <li class='list-group-item'>Закреплен за : <span id="house_subdivision"></span></li>
             <li class='list-group-item'>Номер дома: <span id="house_number"></span></li>
             <li class='list-group-item'>Серия : <span id="house_serial"></span> </li>
             <li class='list-group-item'>Количество этажей : <span id="house_count_floor"></span> </li>
             <li class='list-group-item'>Количество входов : <span id="house_count_entrance"></span> </li>
             <li class='list-group-item'>Координаты : <span id="house_coordinates" /> </li>
-            <button id='edit' class='fa fa-gear' onclick="showDialog($('#house_view #house_id').html())" style='font-size:24px'>Edit</button>
+            <button id='edit' class='fa fa-gear' onclick="showEditDialog($('#house_view #house_id').html())" style='font-size:24px'>Edit</button>
         </ul>
     </div>
 
     <div id="house_edit">
-        <form id="address_form" action="/api/Addresses/" method="put">
+        <form id="address_form" class="form-horizontal" action="/api/Addresses/" method="put">
             <span name="id" id="house_id" value="" />
-            <li class='list-group-item'>Номер дома: <input id="house_number"/> </li>
-            <li class='list-group-item'>Серия : <input id="house_serial" /> </li>
-            <li class='list-group-item'>Количество этажей : <input id="house_count_floor" />  </li>
-            <li class='list-group-item'>Количество входов : <input id="house_count_entrance" /> </li>
-            <li class='list-group-item'>Координаты : <input id="house_latitude"></input>шир. <input id="house_longitude"></input>дол. </li>
-            <input type="submit" value="Submit"></input>
+            <span name="street_id" id="house_street_id"></span>
+            <span name="subdivision_id" id="house_subdivision_id"></span>
+            <div class="form-group">
+                <label for="select_street" class="control-label col-sm-2">Улица</label>
+                <div class="col-sm-10">
+                    <select class="form-control" id="select_street"></select>
+                </div>
+            </div>
+            <div class="form-group">
+                <label for="select_subdivision" class="control-label col-sm-2">ЖЕК</label>
+                <div class="col-sm-10">
+                    <select class="form-control" id="select_subdivision"></select>
+                </div>
+            </div>
+            <div class="form-group">
+                <label for="house_number" class="control-label col-sm-2">Номер дома</label>
+                <div class="col-sm-10">
+                    <input class="form-control" id="house_number" />
+                </div>
+            </div>
+            <div class="form-group">
+                <label for="house_serial" class="control-label col-sm-2">Серия дома</label>
+                <div class="col-sm-10">
+                    <input class="form-control" id="house_serial" />
+                </div>
+            </div>
+            <div class="form-group">
+                <label for="house_count_floor" class="control-label col-sm-2">Количество этажей</label>
+                <div class="col-sm-10">
+                    <input type="number" min="1" max="100" class="form-control" id="house_count_floor" />
+                </div>
+            </div>
+            <div class="form-group">
+                <label for="house_count_entrance" class="control-label col-sm-2">Количество входов</label>
+                <div class="col-sm-10">
+                    <input class="form-control" type="number" min="1" max="100" id="house_count_entrance" />
+                </div>
+            </div>
+            <div class="form-group">
+                <label for="house_latitude" class="control-label col-sm-2">Широта</label>
+                <div class="col-sm-10">
+                    <input class="form-control" id="house_latitude" />
+                </div>
+            </div>
+            <div class="form-group">
+                <label for="house_longitude" class="control-label col-sm-2">Долгота</label>
+                <div class="col-sm-10">
+                    <input class="form-control" id="house_longitude" />
+                </div>
+            </div>
+            <div class="form-group">
+                <div class="col-sm-10">
+                    <input type="submit" class="btn btn-success pull-right btn-block" value="Submit"></input>
+                </div>
+            </div>
+        </form>
+    </div>
+
+    <div id="house_add">
+        <form name="new_address" id="new_address_form" class="form-horizontal" action="/api/Addresses" method="post">
+            <div class="form-group">
+                <label for="select_street" class="control-label col-sm-2">Улица</label>
+                <div class="col-sm-10">
+                    <select class="form-control" id="select_street"></select>
+                </div>
+            </div>
+            <div class="form-group">
+                <label for="select_subdivision" class="control-label col-sm-2">ЖЕК</label>
+                <div class="col-sm-10">
+                    <select class="form-control" id="select_subdivision"></select>
+                </div>
+            </div>
+            <div class="form-group">
+                <label for="house_number" class="control-label col-sm-2">Номер дома</label>
+                <div class="col-sm-10">
+                    <input class="form-control" id="house_number" />
+                </div>
+            </div>
+            <div class="form-group">
+                <label for="house_serial" class="control-label col-sm-2">Серия дома</label>
+                <div class="col-sm-10">
+                    <input class="form-control" id="house_serial" />
+                </div>
+            </div>
+            <div class="form-group">
+                <label for="house_count_floor" class="control-label col-sm-2">Количество этажей</label>
+                <div class="col-sm-10">
+                    <input type="number" min="1" max="100" class="form-control" id="house_count_floor" />
+                </div>
+            </div>
+            <div class="form-group">
+                <label for="house_count_entrance" class="control-label col-sm-2">Количество входов</label>
+                <div class="col-sm-10">
+                    <input class="form-control" type="number" min="1" max="100" id="house_count_entrance" />
+                </div>
+            </div>
+            <div class="form-group">
+                <label for="house_latitude" class="control-label col-sm-2">Широта</label>
+                <div class="col-sm-10">
+                    <input class="form-control" id="house_latitude" />
+                </div>
+            </div>
+            <div class="form-group">
+                <label for="house_longitude" class="control-label col-sm-2">Долгота</label>
+                <div class="col-sm-10">
+                    <input class="form-control" id="house_longitude" />
+                </div>
+            </div>
+            <div class="form-group">
+                <div class="col-sm-10">
+                    <input type="submit" class="btn btn-success pull-right btn-block" value="Submit"></input>
+                </div>
+            </div>
         </form>
     </div>
 </span>
@@ -64,21 +171,56 @@
     <section class="scripts">
 
         <script type="text/javascript">
+            var subdivisions = [];
+            var streets = [];
+            var markers = [];
 
-    <!-- This code tells the browser to execute the "Initialize" method only when the complete document model has been loaded. -->
-     $(document).ready(function () {
-     $.ajaxSetup({ cache: false });
-         Initialize();
-     });
+                $(document).ready(function () {
+                    $.ajaxSetup({ cache: false });
+                    Initialize();
+                });
 
-     //$("#map_canvas").on("click", "#edit", function () {
-     //           showDialog();
-     //});
+            function getSubdivisions() {
+                $('#subdivisions').empty();
+                $('#subdivisions').append("<option disabled selected>Выберите ЖРЕО:</option>");
+                $.get("http://localhost:4955/api/Subdivision", function (data, status) {
+                    subdivisions = data;
+                    $.each(data, function (i, item) {
+                        $("#subdivisions").append("<option value=" + item["SubdivisionId"] + ">" + item["SubdivisionName"] + "</option>");
+                    });
+                });
+            }
+            function getStreets() {
+                $.ajax({
+                    type: "GET",
+                    url: "/api/Streets",
+                    dataType: "json"
+                }).done(function (data) {
+                    streets = data;
+                });
 
-    // Where all the fun happens
+            }
+
+            function updateSubdivisionsList(element) {
+                element.empty();
+                $.each(subdivisions, function (key, value) {
+                    element.append($("<option></option>")
+                        .attr("value", value['SubdivisionId'])
+                        .text(value['SubdivisionName']));
+                });
+            }
+
+            function updateStreetsList(element) {
+                element.empty();
+                $.each(streets, function (key, value) {
+                    element.append($("<option></option>")
+                        .attr("value", value['StreetId'])
+                        .text(value['StreetName']));
+                });
+            }
+
+            // Where all the fun happens
             function Initialize() {
-
-
                 // Google has tweaked their interface somewhat - this tells the api to use that new UI
                 google.maps.visualRefresh = true;
                 var Kiev = new google.maps.LatLng(50.4546600, 30.5238000);
@@ -89,46 +231,39 @@
                     center: Kiev,
                     mapTypeId: google.maps.MapTypeId.G_NORMAL_MAP
                 };
-
                 // This makes the div with id "map_canvas" a google map
                 var map = new google.maps.Map(document.getElementById("map_canvas"), mapOptions);
+                getSubdivisions();
+                getStreets();
 
-                $.get("http://localhost:4955/api/Subdivision", function (data, status) {
-                    $.each(data, function (i, item) {
-                        $("#subdivisions").append("<option value=" + item["<SubdivisionId>k__BackingField"] + ">" + item["<SubdivisionName>k__BackingField"] + "</option>");
-                    });
-                });
-
-                // var marker = [];
-                var merkers = [];
                 var lastInfoWindow;
 
                 // you can either make up a JSON list server side, or call it from a controller using JSONResult
                 $("select").change(function () {
                     $.get("/api/Addresses/AddressesBySubdivision/" + $("#subdivisions").val(), function (data, status) {
-                        for (var i = 0; i < merkers.length; i++) {
-                            merkers[i].setMap(null);
-                        }
-                        merkers = [];
+                        deleteMarkers(markers);
+                        markers = [];
                         $.each(data, function (i, item) {
                             marker = new google.maps.Marker({
-                                'position': new google.maps.LatLng(item['<Latitude>k__BackingField'], item['<Longitude>k__BackingField']),
+                                'position': new google.maps.LatLng(item['Latitude'], item['Longitude']),
                                 'map': map,
-                                'title': item['<House>k__BackingField'],
-                                'house_id': item['<AddressId>k__BackingField']
+                                'title': item['House'],
+                                'house_id': item['AddressId']
                             });
                             marker.setMap(map);
-                            merkers.push(marker);
+                            markers.push(marker);
                             marker.setIcon('http://maps.google.com/mapfiles/ms/icons/blue-dot.png');
                             google.maps.event.addListener(marker, 'click', (function (marker, i) {
                                 return function () {
                                     var infowindow = new google.maps.InfoWindow();
                                     $('#house_view #house_id').html(marker.house_id);
-                                    $('#house_view #house_number').html(item['<House>k__BackingField']);
-                                    $('#house_view #house_serial').html(item['<Serial>k__BackingField']);
-                                    $('#house_view #house_count_floor').html(item['<CountFloor>k__BackingField']);
-                                    $('#house_view #house_count_entrance').html(item['<CountEntrance>k__BackingField']);
-                                    $('#house_view #house_coordinates').html(item['<Latitude>k__BackingField'] + "° шир. -" + item['<Longitude>k__BackingField'] + "° дол.");
+                                    $('#house_view #house_street').html($.grep(streets, function (e) { return e.StreetId == item.StreetId; })[0].StreetName);
+                                    $('#house_view #house_subdivision').html($.grep(subdivisions, function (e) { return e.SubdivisionId == item.SubdivisionId; })[0].SubdivisionName);
+                                    $('#house_view #house_number').html(item.House);
+                                    $('#house_view #house_serial').html(item.Serial);
+                                    $('#house_view #house_count_floor').html(item.СountFloor);
+                                    $('#house_view #house_count_entrance').html(item.СountEntrance);
+                                    $('#house_view #house_coordinates').html(item['Latitude'] + "° шир. -" + item['Longitude'] + "° дол.");
                                     infowindow.setContent($('#house_view').html());
                                     infowindow.open(map, marker);
                                 }
@@ -145,28 +280,119 @@
                         type: "PUT",
                         url: url,
                         data: {
-                            "<House>k__BackingField": "39/2",
-                            "<СountFloor>k__BackingField": 4,
-                            "<Latitude>k__BackingField": 50.448934,
-                            "<Longitude>k__BackingField": 30.610834,
+                            "AddressId": $('#house_edit #house_id').val(),
+                            "StreetId": $('#house_edit #select_street').val(),
+                            "SubdivisionId": $('#house_edit #select_subdivision').val(),
+                            "Serial": $('#house_edit #house_serial').val(),
+                            "House": $('#house_edit #house_number').val(),
+                            "СountFloor": $('#house_edit #house_count_floor').val(),
+                            "СountEntrance": $('#house_edit #house_count_entrance').val(),
+                            "Latitude": $('#house_edit #house_latitude').val(),
+                            "Longitude": $('#house_edit #house_longitude').val()
                         },
                         dataType: "json"
                     });
-            });     
-           }
-
-            function showDialog(id) {
-                $.get("/api/Addresses/GetAddress/" + id, function (data, status) {
-                    $('#house_edit #house_id').val(data['<AddressId>k__BackingField']);
-                    $('#house_edit #house_number').val(data['<House>k__BackingField']);
-                    $('#house_edit #house_serial').val(data['<Serial>k__BackingField']);
-                    $('#house_edit #house_count_floor').val(data['<CountFloor>k__BackingField']);
-                    $('#house_edit #house_count_entrance').val(data['<CountEntrance>k__BackingField']);
-                    $('#house_edit #house_latitude').val(data['<Latitude>k__BackingField']);
-                    $('#house_edit #house_longitude').val(data['<Longitude>k__BackingField']);
+                    posting.done(function (data) {
+                        getSubdivisions();
+                        deleteMarkers(markers);
+                        alert('success');
+                    });
                 });
-                $("#house_edit").dialog();
+
+                $("#new_address_form").submit(function (event) {
+                    event.preventDefault();
+                    var $form = $(this),
+                        url = $form.attr('action');
+                    var posting = $.ajax({
+                        type: "POST",
+                        url: url,
+                        data: {
+                            "StreetId": $('#house_add #select_street').val(),
+                            "SubdivisionId": $("#house_add #select_subdivision").val(),
+                            "Serial": $("#house_add #house_serial").val(),
+                            "House": $("#house_add #house_number").val(),
+                            "СountFloor": $("#house_add #house_count_floor").val(),
+                            "СountEntrance": $("#house_add #house_count_entrance").val(),
+                            "Latitude": $("#house_add #house_latitude").val(),
+                            "Longitude": $("#house_add #house_longitude").val()
+                        },
+                        dataType: "json"
+                    });
+                    posting.done(function (data) {
+                        getSubdivisions();
+                        deleteMarkers(markers);
+                        alert("success");
+                    });
+                });
+
+                google.maps.event.addListener(map, 'click', function (event) {
+                    placeMarker(event.latLng);
+                });
+
+                function placeMarker(location) {
+                    var marker = new google.maps.Marker({
+                        position: location,
+                        map: map
+                    });
+                    marker.setIcon('http://maps.google.com/mapfiles/ms/icons/green-dot.png');
+                    markers.push(marker);
+                    showAddDialog(location);
+
+                }
             }
+
+            function showAddDialog(coordinates, newMarker) {
+                $("#house_add").dialog({
+                    minWidth: 350,
+                    minHeight: 500,
+                    width: 600,
+                    maxWidth: 600,
+                    maxHeight: 600,
+                    title: "Новый адрес"
+                });
+                updateStreetsList($('#house_add #select_street'));
+                updateSubdivisionsList($('#house_add #select_subdivision'));
+
+                $('#house_add #house_latitude').val(coordinates.lat);
+                $('#house_add #house_longitude').val(coordinates.lng);
+
+            }
+
+            function showEditDialog(id) {
+                $("#house_edit").dialog({
+                    minWidth: 350,
+                    minHeight: 500,
+                    width: 600,
+                    maxWidth: 600,
+                    maxHeight: 600,
+                    title: "Редактирование адреса"
+                });
+                updateStreetsList($('#house_edit #select_street'));
+                updateSubdivisionsList($('#house_edit #select_subdivision'));
+
+                $.get("/api/Addresses/GetAddress/" + id, function (data, status) {
+                    $('#house_edit #house_id').val(data['AddressId']);
+                    $('#house_edit #house_street_id').val(data['StreetId']);
+                    $('#house_edit #select_street').val(data['StreetId']);
+                    $('#house_edit #house_subdivision_id').val(data['SubdivisionId']);
+                    $('#house_edit #select_subdivision').val(data['SubdivisionId']);
+                    $('#house_edit #house_number').val(data['House']);
+                    $('#house_edit #house_serial').val(data['Serial']);
+                    $('#house_edit #house_count_floor').val(data['СountFloor']);
+                    $('#house_edit #house_count_entrance').val(data['СountEntrance']);
+                    $('#house_edit #house_latitude').val(data['Latitude']);
+                    $('#house_edit #house_longitude').val(data['Longitude']);
+                });
+
+            }
+
+
+            function deleteMarkers(markers) {
+                for (var i = 0; i < markers.length; i++) {
+                    markers[i].setMap(null);
+                }
+            }
+
 
 
         </script>
