@@ -30,6 +30,12 @@
         </div>
     </div>
     <div class="form-group">
+        @Html.LabelFor(m => m.SubdivisionId, new { @class = "col-md-2 control-label" })
+        <div class="col-md-10">
+            <select id="subdivisions" class="form-control" name="SubdivisionId"></select>
+        </div>
+    </div>
+    <div class="form-group">
         <div class="col-md-offset-2 col-md-10">
             <input type="submit" class="btn btn-default" value="Register" />
         </div>
@@ -38,4 +44,20 @@
 
 @section Scripts {
     @Scripts.Render("~/bundles/jqueryval")
+<script>
+    $().ready(function () {
+        $.ajaxSetup({ cache: false });
+        $.ajax({
+            type: "GET",
+            url: "/api/Subdivision",
+            dataType: "json"
+        }).done(function (data) {
+            $.each(data, function (key, value) {
+                $('#subdivisions').append($("<option></option>")
+                    .attr("value", value['SubdivisionId'])
+                    .text(value['SubdivisionName']));
+            });
+        });
+    });
+</script>
 }

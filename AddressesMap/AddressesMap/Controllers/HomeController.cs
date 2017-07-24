@@ -1,5 +1,8 @@
-﻿using AddressesMap.Extensions;
+﻿using AddressesMap.Models;
 using AddressesMap.Models.DBModels;
+using AddressesMap.Models.VerifyModels;
+using Microsoft.AspNet.Identity;
+using Microsoft.AspNet.Identity.EntityFramework;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -11,8 +14,12 @@ namespace AddressesMap.Controllers
     public class HomeController : Controller
     {
         AddressesMapModel db = new AddressesMapModel();
+
         public ActionResult Index()
         {
+            //Guid g = Guid.NewGuid();
+            //vm.AspNetRoles.Add(new AspNetRole() { Id = g.ToString(), Name = "Subdivision cooperator" });
+            //vm.SaveChanges();
             return View();
         }
 
@@ -30,26 +37,5 @@ namespace AddressesMap.Controllers
             return View();
         }
 
-        public ActionResult EditAddress(int id)
-        {
-            Address adr = db.Addresses.Find(id);
-            if (adr != null)
-            {
-                ViewBag.Streets = db.Streets.ToList().ToSelectList(str => str.StreetName,
-                                                          str => str.StreetId.ToString(),
-                                                          "-1",
-                                                          "-- None -- ",
-                                                          true);
-                ViewBag.Subdivisions = db.Subdivisions.ToList().ToSelectList(str => str.SubdivisionName,
-                                                                             str => str.SubdivisionId.ToString(),
-                                                                             "-1",
-                                                                             "-- None -- ",
-                                                                             true);
-                return PartialView("EditAddress", adr);
-            }
-            return View("Index");
-
-
-        }
     }
 }
