@@ -79,6 +79,11 @@ namespace AddressesMap.Controllers
             switch (result)
             {
                 case SignInStatus.Success:
+                    var identity = UserManager.FindByEmail(model.Email);
+                    HttpCookie cookie = new HttpCookie("SubdivisionId");
+                    cookie.Value = identity.SubdivisionId.ToString();
+                    HttpContext.Response.Cookies.Remove("SubdivisionId");
+                    HttpContext.Response.SetCookie(cookie);
                     return RedirectToLocal(returnUrl);
                 case SignInStatus.LockedOut:
                     return View("Lockout");
@@ -155,8 +160,10 @@ namespace AddressesMap.Controllers
                 var result = await UserManager.CreateAsync(user, model.Password);
                 if (result.Succeeded)
                 {
+                    await UserManager.AddToRoleAsync(user.Id, "Subdivision cooperator");
+
                     await SignInManager.SignInAsync(user, isPersistent:false, rememberBrowser:false);
-                    
+
 
                     // For more information on how to enable account confirmation and password reset please visit https://go.microsoft.com/fwlink/?LinkID=320771
                     // Send an email with this link
@@ -164,7 +171,12 @@ namespace AddressesMap.Controllers
                     // var callbackUrl = Url.Action("ConfirmEmail", "Account", new { userId = user.Id, code = code }, protocol: Request.Url.Scheme);
                     // await UserManager.SendEmailAsync(user.Id, "Confirm your account", "Please confirm your account by clicking <a href=\"" + callbackUrl + "\">here</a>");
 
-                    return RedirectToAction("Index", "Home");
+                    HttpCookie cookie = new HttpCookie("SubdivisionId");
+                    cookie.Value = model.SubdivisionId.ToString();
+                    HttpContext.Response.Cookies.Remove("SubdivisionId");
+                    HttpContext.Response.SetCookie(cookie);
+
+                    return RedirectToAction("Index", "User");
                 }
                 AddErrors(result);
             }

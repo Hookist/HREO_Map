@@ -34,11 +34,9 @@ namespace AddressesMap.Models.DBModels
         [DataMember]
         [Column(TypeName = "numeric")]
         public decimal? Longitude { get; set; }
-        [DataMember]
+
         public virtual Street Street { get; set; }
-        [DataMember]
+
         public virtual Subdivision Subdivision { get; set; }
-
-
     }
 }

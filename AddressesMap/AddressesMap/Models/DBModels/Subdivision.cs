@@ -15,15 +15,19 @@ namespace AddressesMap.Models.DBModels
         public Subdivision()
         {
             Addresses = new HashSet<Address>();
+            AspNetUsers = new HashSet<AspNetUser>();
         }
         [DataMember]
         public int SubdivisionId { get; set; }
-
         [DataMember]
         [Required]
         [StringLength(64)]
         public string SubdivisionName { get; set; }
+
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<Address> Addresses { get; set; }
+
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
+        public virtual ICollection<AspNetUser> AspNetUsers { get; set; }
     }
 }

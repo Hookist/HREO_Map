@@ -1,9 +1,4 @@
-﻿using AddressesMap.Models;
-using AddressesMap.Models.DBModels;
-using AddressesMap.Models.VerifyModels;
-using Microsoft.AspNet.Identity;
-using Microsoft.AspNet.Identity.EntityFramework;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Web;
@@ -13,29 +8,26 @@ namespace AddressesMap.Controllers
 {
     public class HomeController : Controller
     {
-        AddressesMapModel db = new AddressesMapModel();
-
+        // GET: Home
         public ActionResult Index()
         {
-            //Guid g = Guid.NewGuid();
-            //vm.AspNetRoles.Add(new AspNetRole() { Id = g.ToString(), Name = "Subdivision cooperator" });
-            //vm.SaveChanges();
             return View();
         }
 
-        public ActionResult About()
+        [Authorize]
+        public ActionResult Map()
         {
-            ViewBag.Message = "Your application description page.";
+            bool result = User.IsInRole("Admin");
 
-            return View();
+            if(result)
+                return RedirectToAction("Index", "Admin");
+
+            result = User.IsInRole("Subdivision cooperator");
+
+            if (result)
+                return RedirectToAction("Index", "User");
+
+            return RedirectToAction("Login", "Acount");
         }
-
-        public ActionResult Contact()
-        {
-            ViewBag.Message = "Your contact page.";
-
-            return View();
-        }
-
     }
 }

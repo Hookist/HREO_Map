@@ -88,7 +88,7 @@ namespace AddressesMap.Controllers.Api
 
             db.Addresses.Add(address);
             await db.SaveChangesAsync();
-
+            
             return StatusCode(HttpStatusCode.NoContent);
         }
 
@@ -117,7 +117,7 @@ namespace AddressesMap.Controllers.Api
             {
                 return null;
             }
-            return db.Addresses.Where(a => a.SubdivisionId == id && a.AddressId < 500);
+            return db.Addresses.Where(a => a.SubdivisionId == id);
         }
 
         protected override void Dispose(bool disposing)
