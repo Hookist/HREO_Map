@@ -10,15 +10,18 @@ using System.Web.Mvc;
 
 namespace AddressesMap.Controllers
 {
+    [Authorize(Roles = "Admin")]
     public class AdminController : Controller
     {
         AddressesMapModel db = new AddressesMapModel();
 
         public ActionResult Index()
         {
-            //Guid g = Guid.NewGuid();
-            //vm.AspNetRoles.Add(new AspNetRole() { Id = g.ToString(), Name = "Subdivision cooperator" });
-            //vm.SaveChanges();
+            return View();
+        }
+
+        public ActionResult Settings()
+        {
             return View();
         }
 

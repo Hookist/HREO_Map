@@ -14,6 +14,7 @@ using System.Web.Http.Description;
 
 namespace AddressesMap.Controllers.Api
 {
+    [Authorize(Roles = "Admin")]
     public class SubdivisionController : ApiController
     {
         private AddressesMapModel db = new AddressesMapModel();
@@ -82,7 +83,7 @@ namespace AddressesMap.Controllers.Api
             db.Subdivisions.Add(subdivision);
             await db.SaveChangesAsync();
 
-            return CreatedAtRoute("DefaultApi", new { id = subdivision.SubdivisionId }, subdivision);
+            return StatusCode(HttpStatusCode.NoContent);//CreatedAtRoute("DefaultApi", new { id = subdivision.SubdivisionId }, subdivision);
         }
 
         // DELETE: api/Subdivision/5
@@ -98,7 +99,7 @@ namespace AddressesMap.Controllers.Api
             db.Subdivisions.Remove(subdivision);
             await db.SaveChangesAsync();
 
-            return Ok(subdivision);
+            return StatusCode(HttpStatusCode.NoContent);
         }
 
 

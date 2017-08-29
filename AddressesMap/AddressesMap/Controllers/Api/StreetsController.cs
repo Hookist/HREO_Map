@@ -14,6 +14,7 @@ using AddressesMap.Models.DBModels;
 
 namespace AddressesMap.Controllers.Api
 {
+    [Authorize(Roles = "Admin")]
     public class StreetsController : ApiController
     {
         private AddressesMapModel db = new AddressesMapModel();
@@ -84,7 +85,7 @@ namespace AddressesMap.Controllers.Api
             db.Streets.Add(street);
             await db.SaveChangesAsync();
 
-            return CreatedAtRoute("DefaultApi", new { id = street.StreetId }, street);
+            return StatusCode(HttpStatusCode.NoContent);
         }
 
         // DELETE: api/Streets/5
@@ -100,7 +101,7 @@ namespace AddressesMap.Controllers.Api
             db.Streets.Remove(street);
             await db.SaveChangesAsync();
 
-            return Ok(street);
+            return StatusCode(HttpStatusCode.NoContent);
         }
 
         protected override void Dispose(bool disposing)

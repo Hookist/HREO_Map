@@ -12,7 +12,6 @@ using AddressesMap.Models;
 
 namespace AddressesMap.Controllers
 {
-    [Authorize]
     public class AccountController : Controller
     {
         private ApplicationSignInManager _signInManager;

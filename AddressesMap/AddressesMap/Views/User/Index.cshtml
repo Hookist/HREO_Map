@@ -192,6 +192,7 @@
 
             var streets = [];
             var markers = [];
+            var map = {};
 
                 $(document).ready(function () {
                     $.ajaxSetup({ cache: false });
@@ -232,7 +233,7 @@
                     mapTypeId: google.maps.MapTypeId.G_NORMAL_MAP
                 };
                 // This makes the div with id "map_canvas" a google map
-                var map = new google.maps.Map(document.getElementById("map_canvas"), mapOptions);
+                map = new google.maps.Map(document.getElementById("map_canvas"), mapOptions);
             
                 getStreets();
 
@@ -242,39 +243,7 @@
 
                 UpdateMarkers();
 
-                function UpdateMarkers() {
-
-                    $.get("/api/Addresses/AddressesBySubdivision/" + subdivisionId, function (data, status) {
-                        deleteMarkers(markers);
-                        markers = [];
-                        $.each(data, function (i, item) {
-                            marker = new google.maps.Marker({
-                                'position': new google.maps.LatLng(item['Latitude'], item['Longitude']),
-                                'map': map,
-                                'title': item['House'],
-                                'house_id': item['AddressId']
-                            });
-                            marker.setMap(map);
-                            markers.push(marker);
-                            marker.setIcon('http://maps.google.com/mapfiles/ms/icons/blue-dot.png');
-                            google.maps.event.addListener(marker, 'click', (function (marker, i) {
-                                return function () {
-                                    var infowindow = new google.maps.InfoWindow();
-                                    $('#house_view #house_id').html(marker.house_id);
-                                    $('#house_view #house_street').html($.grep(streets, function (e) { return e.StreetId == item.StreetId; })[0].StreetName);
-                                    $('#house_view #house_subdivision').html(subdivisionName);
-                                    $('#house_view #house_number').html(item.House);
-                                    $('#house_view #house_serial').html(item.Serial);
-                                    $('#house_view #house_count_floor').html(item.СountFloor);
-                                    $('#house_view #house_count_entrance').html(item.СountEntrance);
-                                    $('#house_view #house_coordinates').html(item['Latitude'] + "° шир. -" + item['Longitude'] + "° дол.");
-                                    infowindow.setContent($('#house_view').html());
-                                    infowindow.open(map, marker);
-                                }
-                            })(marker, i));
-                        });
-                    });
-                }
+              
                 
 
                 $("#address_form").submit(function (event) {
@@ -400,6 +369,7 @@
                     buttons: {
                         "Подтвердить": function () {
                             deleteAddress(id);
+                            $(this).dialog("close");
                         },
                         "Отмена": function () {
                             $(this).dialog("close");
@@ -429,6 +399,40 @@
                 for (var i = 0; i < markers.length; i++) {
                     markers[i].setMap(null);
                 }
+            }
+
+            function UpdateMarkers() {
+
+                $.get("/api/Addresses/AddressesBySubdivision/" + subdivisionId, function (data, status) {
+                    deleteMarkers(markers);
+                    markers = [];
+                    $.each(data, function (i, item) {
+                        marker = new google.maps.Marker({
+                            'position': new google.maps.LatLng(item['Latitude'], item['Longitude']),
+                            'map': map,
+                            'title': item['House'],
+                            'house_id': item['AddressId']
+                        });
+                        marker.setMap(map);
+                        markers.push(marker);
+                        marker.setIcon('http://maps.google.com/mapfiles/ms/icons/blue-dot.png');
+                        google.maps.event.addListener(marker, 'click', (function (marker, i) {
+                            return function () {
+                                var infowindow = new google.maps.InfoWindow();
+                                $('#house_view #house_id').html(marker.house_id);
+                                $('#house_view #house_street').html($.grep(streets, function (e) { return e.StreetId == item.StreetId; })[0].StreetName);
+                                $('#house_view #house_subdivision').html(subdivisionName);
+                                $('#house_view #house_number').html(item.House);
+                                $('#house_view #house_serial').html(item.Serial);
+                                $('#house_view #house_count_floor').html(item.СountFloor);
+                                $('#house_view #house_count_entrance').html(item.СountEntrance);
+                                $('#house_view #house_coordinates').html(item['Latitude'] + "° шир. -" + item['Longitude'] + "° дол.");
+                                infowindow.setContent($('#house_view').html());
+                                infowindow.open(map, marker);
+                            }
+                        })(marker, i));
+                    });
+                });
             }
 
 

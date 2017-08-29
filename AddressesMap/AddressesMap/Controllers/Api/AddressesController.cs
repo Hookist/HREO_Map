@@ -15,6 +15,7 @@ using System.Threading;
 
 namespace AddressesMap.Controllers.Api
 {
+    [Authorize]
     public class AddressesController : ApiController
     {
         private AddressesMapModel db = new AddressesMapModel();
@@ -134,37 +135,5 @@ namespace AddressesMap.Controllers.Api
             return db.Addresses.Count(e => e.AddressId == id) > 0;
         }
 
-        private GeocodeResponse TakeCoordinates(string address)
-        {
-            var request = new GeocodingRequest();
-            request.Address = address;
-            request.Sensor = false;
-            return new GeocodingService().GetResponse(request);
-        }
-
-        private HttpResponseMessage FillCoordinates(HttpRequestMessage request)
-        {
-            var addresses = (from adr in db.Addresses
-                             join str in db.Streets
-                             on adr.StreetId equals str.StreetId
-                             where adr.AddressId > 883
-                             select new
-                             {
-                                 addressId = adr.AddressId,
-                                 houseAddress = "Киев " + str.StreetName + " " + adr.House
-                             }).ToList();
-            foreach (var address in addresses)
-            {
-                var responce = TakeCoordinates(address.houseAddress);
-                Thread.Sleep(1000);
-                var location = responce.Results.Select(p => p.Geometry.Location);
-                var House = db.Addresses.Where(a => a.AddressId == address.addressId).First();
-                House.Latitude = (decimal)location.Select(p => p.Latitude).FirstOrDefault();
-                House.Longitude = Convert.ToDecimal(location.Select(p => p.Longitude).FirstOrDefault());
-                db.SaveChanges();
-            }
-            //adrModel.SaveChanges();
-            return request.CreateResponse(HttpStatusCode.OK);
-        }
     }
 }

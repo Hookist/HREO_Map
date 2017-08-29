@@ -1,0 +1,335 @@
+﻿
+@{
+    ViewBag.Title = "Settings";
+}
+<script src="~/Scripts/CustomScripts/ui-functions.js?num=1"></script>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+
+<h2>Settings</h2>
+
+<span style="display:none">
+    <div id="street_add">
+        <div class="form-group">
+            <label for="street_name" class="control-label col-sm-2">Улица</label>
+                <input class="form-control" id="street_name" style="float:right"/>
+        </div>
+    </div>
+
+    <div id="street_delete">
+        <div class="form-group">
+            <label for="street_name" class="control-label">Вы точно хотите удалить эту улицу?</label>
+        </div>
+    </div>
+
+    <div id="street_update">
+        <div class="form-group">
+            <label for="street_name" class="control-label col-sm-2">Улица</label>
+            <input class="form-control" id="street_name" style="float:right"/>
+        </div>
+    </div>
+
+    <div id="subdivision_add">
+        <div class="form-group">
+            <label for="subdivision_name" class="control-label col-sm-2">Подразделение</label>
+            <input class="form-control" id="subdivision_name" style="float:right" />
+        </div>
+    </div>
+
+    <div id="subdivision_delete">
+        <div class="form-group">
+            <label class="control-label">Вы точно хотите удалить данное подразделение?</label>
+        </div>
+    </div>
+
+    <div id="subdivision_update">
+        <div class="form-group">
+            <label for="subdivision_name" class="control-label col-sm-2">Подразделение</label>
+            <input class="form-control" id="subdivision_name" style="float:right"/>
+        </div>
+    </div>
+
+</span>
+
+<div class="form-group">
+    <select  class="form-control" id="subdivisions"></select>
+    <button onclick="showUpdateSubdivisionDialog($('#subdivision_update'), updateSubdivision)">Редактировать подразделение</button>
+    <button onclick='showDeleteSubdivisionDialog($("#subdivision_delete"), deleteSubdivision)'>Удалить подразделение</button>
+    <button onclick="showAddSubdivisionDialog($('#subdivision_add'), addSubdivision)">Добавить подразделение</button>
+   
+</div>
+<div class="form-group">
+    <select class="form-control" id="streets"></select>
+    <button onclick="showUpdateStreetDialog($('#street_update'), updateStreet)">Редактировать улицу</button>
+    <button onclick="showDeleteStreetDialog($('#street_delete'), deleteStreet)">Удалить улицу</button>
+    <button onclick="showAddStreetDialog($('#street_add'), addStreet)">Добавить улицу</button>
+</div>
+<div class="column" id="alerts">
+
+</div>
+
+
+
+
+<script>
+
+    var subdivisions = [];
+    var streets = [];
+
+    getSubdivisions();
+    getStreets();
+
+    function getSubdivisions() {
+        $('#subdivisions').empty();
+        $('#subdivisions').append("<option disabled selected>Подразделения :</option>");
+        $.get("/api/Subdivision", function (data, status) {
+            subdivisions = data;
+            $.each(data, function (i, item) {
+                $("#subdivisions").append("<option value=" + item["SubdivisionId"] + ">" + item["SubdivisionName"] + "</option>");
+            });
+        });
+    }
+    function getStreets() {
+        $('#streets').empty();
+        $('#streets').append("<option disabled selected>Улицы :</option>");
+        $.ajax({
+            type: "GET",
+            url: "/api/Streets",
+            dataType: "json"
+        }).done(function (data) {
+            streets = data;
+            $.each(data, function (i, item) {
+                $("#streets").append("<option value=" + item["StreetId"] + ">" + item["StreetName"] + "</option>");
+            });
+        });
+
+    }
+
+    function addStreet(name) {
+        var posting = $.ajax({
+            type: "POST",
+            url: "/api/Streets",
+            data: {
+                "StreetName": name
+            },
+            dataType: "json"
+        });
+
+        posting.done(function (data) {
+            succsesfullAlert($('#alerts'), "Улица успешно добавлена");
+        });
+    }
+
+    function showAddSubdivisionDialog(dialogId, someFunction) {
+        dialogId.dialog({
+            minWidth: 450,
+            minHeight: 200,
+            maxHeight: 400,
+            maxWidth: 500,
+            buttons: {
+                "Добавить": function () {
+                    someFunction($("#subdivision_add #subdivision_name").val());
+                    $(this).dialog("close");
+                },
+                "Отмена": function () {
+                    $(this).dialog("close");
+                }
+            }
+        })
+    }
+
+    function showDeleteSubdivisionDialog(dialogId, someFunction) {
+        dialogId.dialog({
+            minWidth: 450,
+            minHeight: 200,
+            maxHeight: 400,
+            maxWidth: 500,
+            buttons: {
+                "Удалить": function () {
+                    someFunction($("#subdivisions").val());
+                    $(this).dialog("close");
+                },
+                "Отмена": function () {
+                    $(this).dialog("close");
+                }
+            }
+        })
+    }
+
+    function showUpdateSubdivisionDialog(dialogId, someFunction) {
+        $("#subdivision_update #subdivision_name").val($("#subdivisions option:selected").text());
+        dialogId.dialog({
+            minWidth: 450,
+            minHeight: 200,
+            maxHeight: 400,
+            maxWidth: 500,
+            buttons: {
+                "Обновить": function () {
+                    someFunction($("#subdivisions").val(), $("#subdivision_update #subdivision_name").val());
+                    $(this).dialog("close");
+                },
+                "Отмена": function () {
+                    $(this).dialog("close");
+                }
+            }
+        })
+    }
+
+    function showAddStreetDialog(dialogId, someFunction) {
+        dialogId.dialog({
+            minWidth: 450,
+            minHeight: 200,
+            maxHeight: 400,
+            maxWidth: 500,
+            buttons: {
+                "Добавить": function () {
+                    someFunction($("#street_add #street_name").val());
+                    $(this).dialog("close");
+                },
+                "Отмена": function () {
+                    $(this).dialog("close");
+                }
+            }
+        })
+    }
+
+    function showDeleteStreetDialog(dialogId, someFunction) {
+        dialogId.dialog({
+            minWidth: 450,
+            minHeight: 200,
+            maxHeight: 400,
+            maxWidth: 500,
+            buttons: {
+                "Добавить": function () {
+                    someFunction($("#streets").val());
+                    $(this).dialog("close");
+                },
+                "Отмена": function () {
+                    $(this).dialog("close");
+                }
+            }
+        })
+    }
+
+    function showUpdateStreetDialog(dialogId, someFunction) {
+        $("#street_update #street_name").val($("#streets option:selected").text());
+        dialogId.dialog({
+            minWidth: 450,
+            minHeight: 200,
+            maxHeight: 400,
+            maxWidth: 500,
+            buttons: {
+                "Добавить": function () {
+                    someFunction($("#streets").val(), $("#street_update #street_name").val());
+                    $(this).dialog("close");
+                },
+                "Отмена": function () {
+                    $(this).dialog("close");
+                }
+            }
+        })
+    }
+
+
+    function addSubdivision(name) {
+        var posting = $.ajax({
+            type: "POST",
+            url: "/api/Subdivision",
+            data: {
+                "SubdivisionName": name
+            },
+            dataType: "application/json"
+        });
+
+        posting.done(function (data) {
+            succsesfullAlert($('#alerts'), "Подразделение добавлено");
+            getSubdivisions();
+        });
+    }
+
+    function deleteSubdivision(id) {
+        var posting = $.ajax({
+            type: "DELETE",
+            url: "/api/subdivision/" + id,
+            data: {
+                "SubdivisionId": id
+            },
+            dataType: "application/json"
+
+        });
+
+        posting.done(function (data) {
+            succsesfullAlert($('#alerts'), "Подразделение удалено");
+            getSubdivisions();
+        });
+    }
+
+    function updateSubdivision(id, name) {
+        var posting = $.ajax({
+            type: "PUT",
+            url: "/api/Subdivision/" + id,
+            data: {
+                "SubdivisionId": id,
+                "SubdivisionName": name
+            },
+            dataType: "application/json"
+        });
+
+        posting.done(function (data) {
+            succsesfullAlert($('#alerts'), "Подразделение обновлено");
+            getSubdivisions();
+        });
+    }
+
+    function addStreet(name) {
+        var posting = $.ajax({
+            type: "POST",
+            url: "/api/Streets",
+            data: {
+                "StreetName": name
+            },
+            dataType: "application/json"
+        });
+
+        posting.done(function (data) {
+            succsesfullAlert($('#alerts'), "Улица добавлена");
+            getStreets();
+        });
+    }
+
+    function deleteStreet(id) {
+        var posting = $.ajax({
+            type: "DELETE",
+            url: "/api/streets/" + id,
+            data: {
+                "StreetId": id
+            },
+            dataType: "application/json"
+
+        });
+
+        posting.done(function (data) {
+            succsesfullAlert($('#alerts'), "Улица удалена");
+            getStreets();
+        });
+    }
+
+    function updateStreet(id, name) {
+        var posting = $.ajax({
+            type: "PUT",
+            url: "/api/streets/" + id,
+            data: {
+                "StreetId": id,
+                "StreetName": name
+            },
+            dataType: "application/json"
+        });
+
+        posting.done(function (data) {
+            succsesfullAlert($('#alerts'), "Улица обновлена");
+            getStreets();
+        });
+    }
+
+
+
+</script>

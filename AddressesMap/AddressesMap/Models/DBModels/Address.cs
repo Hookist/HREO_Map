@@ -14,9 +14,9 @@ namespace AddressesMap.Models.DBModels
         [DataMember]
         public int AddressId { get; set; }
         [DataMember]
-        public int StreetId { get; set; }
+        public int? StreetId { get; set; }
         [DataMember]
-        public int SubdivisionId { get; set; }
+        public int? SubdivisionId { get; set; }
         [DataMember]
         [Required]
         [StringLength(12)]

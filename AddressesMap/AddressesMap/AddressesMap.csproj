@@ -214,6 +214,15 @@
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
+    <Compile Include="Migrations\201708291302532_DatabaseCreate.cs" />
+    <Compile Include="Migrations\201708291302532_DatabaseCreate.Designer.cs">
+      <DependentUpon>201708291302532_DatabaseCreate.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201708291327539_UpdateAddressTable.cs" />
+    <Compile Include="Migrations\201708291327539_UpdateAddressTable.Designer.cs">
+      <DependentUpon>201708291327539_UpdateAddressTable.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="Models\AccountViewModels.cs" />
     <Compile Include="Models\DBModels\Address.cs" />
     <Compile Include="Models\DBModels\AddressesMapModel.cs" />
@@ -349,6 +358,7 @@
     <Content Include="Views\Admin\EditAddress.cshtml" />
     <Content Include="Views\User\Index.cshtml" />
     <Content Include="Views\Home\Index.cshtml" />
+    <Content Include="Views\Admin\Settings.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
@@ -358,6 +368,14 @@
   </ItemGroup>
   <ItemGroup>
     <Service Include="{508349B6-6B84-4DF5-91F0-309BEEBAD82D}" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Migrations\201708291302532_DatabaseCreate.resx">
+      <DependentUpon>201708291302532_DatabaseCreate.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201708291327539_UpdateAddressTable.resx">
+      <DependentUpon>201708291327539_UpdateAddressTable.cs</DependentUpon>
+    </EmbeddedResource>
   </ItemGroup>
   <PropertyGroup>
     <VisualStudioVersion Condition="'$(VisualStudioVersion)' == ''">10.0</VisualStudioVersion>
